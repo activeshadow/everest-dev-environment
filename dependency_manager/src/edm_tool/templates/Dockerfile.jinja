@@ -1,0 +1,36 @@
+FROM ubuntu:22.04
+
+ENV TZ=Etc/UTC
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+ARG USERNAME=vscode
+ARG USER_UID=1000
+
+RUN apt update && apt install -y gdb sudo tzdata
+
+RUN useradd -l -u $USER_UID -md /home/$USERNAME -s /bin/bash -p $USERNAME $USERNAME \
+  && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+  && chmod 0440 /etc/sudoers.d/$USERNAME
+
+ADD https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh /home/$USERNAME/.bash/git-prompt.sh
+RUN chown $USERNAME:$USERNAME /home/$USERNAME/.bash/git-prompt.sh \
+  && chmod +x /home/$USERNAME/.bash/git-prompt.sh \
+  && echo "\nsource ~/.bash/git-prompt.sh" >> /home/$USERNAME/.bashrc \
+  && echo "export GIT_PS1_SHOWCOLORHINTS=true" >> /home/$USERNAME/.bashrc \
+  && echo "export PROMPT_COMMAND='__git_ps1 \"\W\" \" » \"'" >> /home/$USERNAME/.bashrc
+
+RUN apt update && apt install -y \
+  python3-pip git rsync wget cmake doxygen graphviz build-essential clang-tidy \
+  cppcheck openjdk-17-jdk npm libboost-all-dev nodejs libssl-dev libsqlite3-dev \
+  clang-format curl rfkill libpcap-dev libevent-dev pkg-config libcap-dev
+
+RUN python3 -m pip install --upgrade pip setuptools wheel jstyleson jsonschema
+
+ADD ./everest-dev-environment/dependency_manager /tmp/edm
+RUN python3 -m pip install /tmp/edm
+
+ADD ./everest-utils/ev-dev-tools /tmp/edt
+RUN python3 -m pip install /tmp/edt
+
+ADD ./Josev /tmp/Josev
+RUN python3 -m pip install -r /tmp/Josev/requirements.txt

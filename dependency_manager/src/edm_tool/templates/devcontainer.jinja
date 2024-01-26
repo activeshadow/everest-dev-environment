@@ -1,0 +1,39 @@
+{
+  "name": "everest",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+
+  "runArgs": [
+    "--security-opt", "seccomp=unconfined", // needed for debug support
+    "--net=host" // needed for accessing external Docker containers
+  ],
+
+  "mounts": [],
+
+  "containerEnv": {
+    "CPM_SOURCE_CACHE": "/home/vscode/.cache/CPM"
+  },
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
+          }
+        },
+
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+
+      "extensions": [
+        "ms-python.python",
+        "ms-vscode.cpptools"
+      ]
+    }
+  },
+
+  "remoteUser": "vscode"
+}

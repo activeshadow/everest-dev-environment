@@ -532,7 +532,7 @@ class EDM:
         EDM.print_git_info(git_info)
 
     @classmethod
-    def setup_workspace_from_config(cls, workspace: str, config: str, update: bool, create_vscode_workspace: bool):
+    def setup_workspace_from_config(cls, workspace: str, config: str, update: bool, create_vscode_workspace: bool, create_vscode_dev_container: bool):
         """Setup a workspace from the provided config, update an existing workspace if specified."""
         workspace_dir = Path(workspace).expanduser().resolve()
 
@@ -558,6 +558,9 @@ class EDM:
 
         if create_vscode_workspace:
             create_vscode_workspace_file(workspace_dir, workspace_checkout)
+
+        if create_vscode_dev_container:
+            create_vscode_dev_container_config(workspace_dir)
 
     @classmethod
     def config_from_dependencies(cls, dependencies: dict, external_in_config: bool, include_remotes: list) -> dict:
@@ -935,6 +938,37 @@ def create_vscode_workspace_file(workspace_path: Path, workspace_checkout: dict)
             content["folders"].append({"path": folder})
     with open(vscode_workspace_file_path, 'w', encoding='utf-8') as ws_file:
         json.dump(content, ws_file, indent="\t")
+
+
+def create_vscode_dev_container_config(workspace_path: Path):
+    """Create a VS Code dev container config at the given workspace_path."""
+    vscode_dev_container_path = workspace_path / '.devcontainer'
+
+    content = {}
+    if vscode_dev_container_path.exists():
+        log.warning(f"VS Code dev container \"{vscode_dev_container_path}\" already exists.")
+        return
+    else:
+        log.info(f"Creating VS Code dev container at: {vscode_dev_container_path}")
+        vscode_dev_container_path.mkdir()
+
+    templates_path = Path(__file__).parent / "templates"
+    env = Environment(
+        loader=FileSystemLoader(templates_path),
+        trim_blocks=True,
+    )
+
+    devcontainer_template = env.get_template("devcontainer.jinja")
+
+    with open(vscode_dev_container_path / 'devcontainer.json', 'w', encoding='utf-8') as out_file:
+        log.info(f"Saving dev container config in: {out_file.name}")
+        out_file.write(devcontainer_template.render({}))
+
+    dockerfile_template = env.get_template("Dockerfile.jinja")
+
+    with open(vscode_dev_container_path / 'Dockerfile', 'w', encoding='utf-8') as out_file:
+        log.info(f"Saving dev container Dockerfile in: {out_file.name}")
+        out_file.write(dockerfile_template.render({}))
 
 
 def load_edm_config():
@@ -1349,7 +1383,7 @@ def main_handler(args):
             log.error("A workspace path must be provided if supplying a config. Stopping.")
             sys.exit(1)
 
-        EDM.setup_workspace_from_config(args.workspace, args.config, False, args.create_vscode_workspace)
+        EDM.setup_workspace_from_config(args.workspace, args.config, False, args.create_vscode_workspace, args.create_vscode_dev_container)
         sys.exit(0)
 
     if args.create_snapshot:
@@ -1419,6 +1453,9 @@ def get_parser(version) -> argparse.ArgumentParser:
     parser.add_argument(
         "--create-vscode-workspace", action="store_true",
         help="Create a VS Code workspace by saving a <workspace>.code-workspace file in the workspace folder.")
+    parser.add_argument(
+        "--create-vscode-dev-container", action="store_true",
+        help="Create a VS Code dev container by creating .devcontainer configs in the workspace folder.")
     parser.add_argument(
         "--cmake", action="store_true",
         help="Use this flag to indicate that the dependency manager was called from a CMake script.")

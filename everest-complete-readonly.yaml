@@ -1,60 +1,58 @@
-RISE-V2G:
-  git: https://github.com/EVerest/ext-RISE-V2G.git
-  git_tag: master
-  options:
-  - THIRD_PARTY_APP_DST rise_v2g
 Josev:
   git: https://github.com/EVerest/ext-switchev-iso15118.git
-  git_tag: everest
-  options:
-  - THIRD_PARTY_APP_DST josev
+  git_tag: 2023.12.0
 everest-cmake:
   git: https://github.com/EVerest/everest-cmake.git
-  git_tag: main
+  git_tag: v0.1.0
 everest-core:
   git: https://github.com/EVerest/everest-core.git
   git_tag: main
 everest-dev-environment:
   git: https://github.com/EVerest/everest-dev-environment.git
-  git_tag: main
+  git_tag: v0.5.6
 everest-framework:
   git: https://github.com/EVerest/everest-framework.git
-  git_tag: main
+  git_tag: v0.9.0
+  options:
+  - BUILD_TESTING OFF
 everest-utils:
   git: https://github.com/EVerest/everest-utils.git
-  git_tag: main
+  git_tag: v0.2.0
+ext-mbedtls:
+  git: https://github.com/EVerest/ext-mbedtls.git
+  git_tag: 8b3f26a
+  options:
+  - ENABLE_PROGRAMS OFF
+  - ENABLE_TESTING OFF
+  - MBEDTLS_FATAL_WARNINGS OFF
+ext-openv2g:
+  git: https://github.com/EVerest/ext-openv2g.git
+  git_tag: 2023.3.0
+libevse-security:
+  git: https://github.com/EVerest/libevse-security.git
+  git_tag: 1604c8b
 libfsm:
   git: https://github.com/EVerest/libfsm.git
-  git_tag: main
+  git_tag: v0.2.0
 liblog:
   git: https://github.com/EVerest/liblog.git
-  git_tag: main
+  git_tag: v0.1.0
   options:
   - BUILD_EXAMPLES OFF
 libmodbus:
   git: https://github.com/EVerest/libmodbus.git
-  git_tag: main
-  options:
-  - BUILD_EXAMPLES OFF
+  git_tag: v0.3.0
 libocpp:
   git: https://github.com/EVerest/libocpp.git
-  git_tag: main
+  git_tag: 84b604a
 libslac:
   git: https://github.com/EVerest/libslac.git
-  git_tag: main
+  git_tag: 486cd8b
 libsunspec:
   git: https://github.com/EVerest/libsunspec.git
-  git_tag: main
-  options:
-  - BUILD_EXAMPLES OFF
+  git_tag: v0.2.0
 libtimer:
   git: https://github.com/EVerest/libtimer.git
-  git_tag: main
+  git_tag: v0.1.1
   options:
   - BUILD_EXAMPLES OFF
-ext-mbedtls:
-  git: https://github.com/EVerest/ext-mbedtls.git
-  git_tag: mbedtls-2.28.0-trustedCAKey
-ext-openv2g:
-  git: https://github.com/EVerest/ext-openv2g.git
-  git_tag: everest
